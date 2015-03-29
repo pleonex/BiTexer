@@ -46,51 +46,79 @@ namespace BiTexer
 
 				if (cmd.Id == Commands.TEXCOORD) {
 					checkNextVertex = true;
-					ChangeTextureCoordinate(ref cmd, oldSize, newSize);
+					cmd = ChangeTextureCoordinate(cmd, oldSize, newSize);
 					commandsList.SetCommand(cmd);
 				}
 
 				if (cmd.Id.IsVertex() && checkNextVertex) {
 					checkNextVertex = false;
-					ChangeVertex(ref cmd, oldSize, newSize);
+					cmd = ChangeVertex(cmd, oldSize, newSize);
 					commandsList.SetCommand(cmd);
 				}
 			}
 		}
 
-		private void ChangeTextureCoordinate(ref Command cmd, Size oldSize, Size newSize)
+		private static Command ChangeTextureCoordinate(Command cmd, Size oldSize, Size newSize)
 		{
-			double x = (cmd.Arguments[0] & 0xFFF).ToDouble(true, 11, 4);
-			double y = (cmd.Arguments[0] >> 16).ToDouble(true, 11, 4);
+			uint arg = 0;
+			arg |= UpdateValue(cmd.Arguments[0], oldSize.Width, newSize.Width, 0, 11, 4);
+			arg |= UpdateValue(cmd.Arguments[0], oldSize.Height, newSize.Height, 1, 11, 4);
+
+			return new Command(cmd.Id, new uint[] { arg });
 		}
 
-		private void ChangeVertex(ref Command cmd, Size oldSize, Size newSize)
+		private static Command ChangeVertex(Command cmd, Size oldSize, Size newSize)
 		{
-			double x, y;
+			uint[] args = new uint[1];
 			switch (cmd.Id) {
 			case Commands.VTX_16:
-				x = (cmd.Arguments[0] & 0xFFFF).ToDouble(true, 3, 12);
-				y = (cmd.Arguments[0] >> 16).ToDouble(true, 3, 12);
+				args = new uint[2];
+				args[0]  = UpdateValue(cmd.Arguments[0], oldSize.Width,  newSize.Width,  0, 3, 12);
+				args[0] |= UpdateValue(cmd.Arguments[0], oldSize.Height, newSize.Height, 1, 3, 12);
+				args[1]  = cmd.Arguments[1];	// No need to update coordinate Z
 				break;
 
 			case Commands.VTX_10:
-				x = (cmd.Arguments[0] & 0x3FF).ToDouble(true, 3, 6);
-				y = (cmd.Arguments[0] >> 10).ToDouble(true, 3, 6);
+				args[0]  = UpdateValue(cmd.Arguments[0], oldSize.Width,  newSize.Width,  0, 3, 6);
+				args[0] |= UpdateValue(cmd.Arguments[0], oldSize.Height, newSize.Height, 1, 3, 6);
+				args[0] |= UpdateValue(cmd.Arguments[0], 1, 1, 2, 3, 6);
 				break;
 
 			case Commands.VTX_XY:
-				x = (cmd.Arguments[0] & 0xFFFF).ToDouble(true, 3, 12);
-				y = (cmd.Arguments[0] >> 16).ToDouble(true, 3, 12);
+				args[0]  = UpdateValue(cmd.Arguments[0], oldSize.Width,  newSize.Width,  0, 3, 12);
+				args[0] |= UpdateValue(cmd.Arguments[0], oldSize.Height, newSize.Height, 1, 3, 12);
 				break;
 
 			case Commands.VTX_XZ:
-				x = (cmd.Arguments[0] & 0xFFFF).ToDouble(true, 3, 12);
+				args[0] = UpdateValue(cmd.Arguments[0], oldSize.Width, newSize.Width, 0, 3, 12);
+				args[0] |= UpdateValue(cmd.Arguments[0], 1, 1, 1, 3, 12);
 				break;
 
 			case Commands.VTX_YZ:
-				y = (cmd.Arguments[0] & 0xFFFF).ToDouble(true, 3, 12);
+				args[0] = UpdateValue(cmd.Arguments[0], oldSize.Height, newSize.Height, 0, 3, 12);
+				args[0] |= UpdateValue(cmd.Arguments[0], 1, 1, 1, 3, 12);
 				break;
 			}
+
+			return new Command(cmd.Id, args);
+		}
+
+		private static uint UpdateValue(uint value, int refOriginal, int refNew, int i,
+			int integerBits, int fractionalBits)
+		{
+			int bitsPerValue = integerBits + fractionalBits + 1; // sign bit too
+			value >>= i * bitsPerValue;
+			value &= (1u << bitsPerValue) - 1;
+
+			int factor = refNew / refOriginal;
+			float coordinate = value.ToDouble(integerBits, fractionalBits);
+			coordinate *= factor;
+
+			uint newValue = coordinate.ToUInt32(integerBits, fractionalBits);
+			newValue &= (1u << bitsPerValue) - 1;
+			newValue <<= i * bitsPerValue;
+
+			return newValue;
 		}
 	}
 }
