@@ -27,15 +27,6 @@ namespace BiTexer
 	{
 		public static void Main(string[] args)
 		{
-			args = new string[] {
-				"-i", "/home/benito/Dropbox/Ninokuni español/Imágenes/N2D/Battle/imd/ParamWindow_ori.bmd0",
-				"-o", "/home/benito/Dropbox/Ninokuni español/Imágenes/N2D/Battle/imd/ParamWindow_mod.bmd0",
-				"-s", "128", "128",
-				"-n", "256", "256",
-				"-m", "0",
-				"-p", "0"
-			};
-
 			var options = new Options();
 			if (CommandLine.Parser.Default.ParseArgumentsStrict(args, options)) {
 				File.Copy(options.InputFile, options.OutputFile, true);
