@@ -57,11 +57,10 @@ namespace BiTexer
 			if (BaseStream.Position == endPosition)
 				return false;
 				
-			ReadCommand();
-
 			if (entryIndex == EntriesInPack)
 				StartReadNewPack();
 
+			ReadCommand();
 			return true;
 		}
 
