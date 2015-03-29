@@ -46,7 +46,7 @@ namespace BiTexer
 			return new Size(OriginalSize[0], OriginalSize[1]);
 		}
 
-		[Option('S', "newSize", Required = true, HelpText = "Size of the nwe texture.")]
+		[OptionArray('n', "newSize", Required = true, HelpText = "Size of the nwe texture.")]
 		public int[] NewSize { get; set; }
 
 		public Size GetNewSize()
