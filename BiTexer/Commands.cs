@@ -64,5 +64,69 @@ namespace BiTexer
 		POS_TEST = 0x71,
 		VEC_TEST = 0x72,
 	}
+
+	public static class CommandsExtension
+	{
+		public static bool IsVertex(this Commands cmd)
+		{
+			switch (cmd) {
+			case Commands.VTX_16:
+			case Commands.VTX_10:
+			case Commands.VTX_XY:
+			case Commands.VTX_XZ:
+			case Commands.VTX_YZ:
+			case Commands.VTX_DIFF:
+				return true;
+
+			default:
+				return false;
+			}
+		}
+
+		public static int ArgumentsSize(this Commands cmd)
+		{
+			switch (cmd) {
+			case Commands.NOP:          	return 0;
+			case Commands.MTX_MODE:     	return 1;
+			case Commands.MTX_PUSH:     	return 0;
+			case Commands.MTX_POP:      	return 1;
+			case Commands.MTX_STORE:    	return 1;
+			case Commands.MTX_RESTORE:  	return 1;
+			case Commands.MTX_IDENTITY: 	return 0;
+			case Commands.MTX_LOAD_4x4: 	return 16;
+			case Commands.MTX_LOAD_4x3: 	return 12;
+			case Commands.MTX_MULT_4x4: 	return 16;
+			case Commands.MTX_MULT_4x3: 	return 12;
+			case Commands.MTX_MULT_3x3: 	return 9;
+			case Commands.MTX_SCALE:    	return 3;
+			case Commands.MTX_TRANS:    	return 3;
+			case Commands.COLOR:        	return 1;
+			case Commands.NORMAL:       	return 1;
+			case Commands.TEXCOORD:     	return 1;
+			case Commands.VTX_16: 			return 2;
+			case Commands.VTX_10: 			return 1;
+			case Commands.VTX_XY: 			return 1;
+			case Commands.VTX_XZ: 			return 1;
+			case Commands.VTX_YZ: 			return 1;
+			case Commands.VTX_DIFF: 		return 1;
+			case Commands.POLYGON_ATTR:   	return 1;
+			case Commands.TEXIMAGE_PARAM: 	return 1;
+			case Commands.PLTT_BASE: 		return 1;
+			case Commands.DIF_AMB: 			return 1;
+			case Commands.SPE_EMI: 			return 1;
+			case Commands.LIGHT_VECTOR: 	return 1;
+			case Commands.LIGHT_COLOR: 		return 1;
+			case Commands.SHININESS: 		return 32;
+			case Commands.BEGIN_VTXS: 		return 1;
+			case Commands.END_VTXS: 		return 0;
+			case Commands.SWAP_BUFFERS: 	return 1;
+			case Commands.VIEWPORT: 		return 1;
+			case Commands.BOX_TEST: 		return 3;
+			case Commands.POS_TEST:		 	return 2;
+			case Commands.VEC_TEST:			return 1;
+			default:   						return 0;
+			}
+		}
+	}
 }
 

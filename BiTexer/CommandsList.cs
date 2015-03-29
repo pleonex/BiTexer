@@ -88,13 +88,17 @@ namespace BiTexer
 		{
 			BaseStream.Position = idPosition++;
 			Commands id = (Commands)reader.ReadByte();
-			entryIndex++;
 
 			BaseStream.Position = argumentsPosition;
-			byte[] args = reader.ReadBytes(0);
-			argumentsPosition += 0;
+			int argsSize = id.ArgumentsSize();
+			argumentsPosition += argsSize * 4;
+
+			uint[] args = new uint[argsSize];
+			for (int i = 0; i < argsSize; i++)
+				args[i] = reader.ReadUInt32();
 
 			command = new Command(id, args);
+			entryIndex++;
 		}
 	}
 }

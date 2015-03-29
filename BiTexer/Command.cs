@@ -24,7 +24,7 @@ namespace BiTexer
 {
 	public struct Command
 	{
-		public Command(Commands id, byte[] arguments)
+		public Command(Commands id, uint[] arguments)
 			: this()
 		{
 			Id = id;
@@ -36,7 +36,7 @@ namespace BiTexer
 			private set;
 		}
 
-		public byte[] Arguments {
+		public uint[] Arguments {
 			get;
 			private set;
 		}
