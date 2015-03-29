@@ -87,7 +87,7 @@ namespace BiTexer
 		private void ReadCommand()
 		{
 			BaseStream.Position = idPosition++;
-			byte id = reader.ReadByte();
+			Commands id = (Commands)reader.ReadByte();
 			entryIndex++;
 
 			BaseStream.Position = argumentsPosition;
