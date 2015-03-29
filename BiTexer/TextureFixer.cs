@@ -110,7 +110,7 @@ namespace BiTexer
 			value >>= i * bitsPerValue;
 			value &= (1u << bitsPerValue) - 1;
 
-			int factor = refNew / refOriginal;
+			float factor = (float)refNew / refOriginal;
 			float coordinate = value.ToDouble(integerBits, fractionalBits);
 			coordinate *= factor;
 
