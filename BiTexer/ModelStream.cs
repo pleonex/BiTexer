@@ -30,12 +30,18 @@ namespace BiTexer
 			BaseStream = stream;
 		}
 
-		public Stream BaseStream {
+		private Stream BaseStream {
 			get;
-			private set;
+			set;
 		}
 
-		public int MoveToCommandList(int model, int polygon)
+		public CommandsList GetCommandsList(int model, int polygon)
+		{
+			int size = MoveToCommandList(model, polygon);
+			return (size == -1) ? null : new CommandsList(BaseStream, size);
+		}
+
+		private int MoveToCommandList(int model, int polygon)
 		{
 			var reader = new BinaryReader(BaseStream);
 			long basePosition = BaseStream.Position;
