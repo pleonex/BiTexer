@@ -19,6 +19,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.IO;
 
 namespace BiTexer
 {
@@ -26,7 +27,20 @@ namespace BiTexer
 	{
 		public static void Main(string[] args)
 		{
-			Console.WriteLine("Hello World!");
+			var options = new Options();
+			if (CommandLine.Parser.Default.ParseArgumentsStrict(args, options)) {
+				File.Copy(options.InputFile, options.OutputFile);
+
+				using (var fs = new FileStream(options.OutputFile, FileMode.Open)) {
+					var model = new ModelStream(fs);
+					var fixer = new TextureFixer(model);
+					fixer.Fix(
+						options.Model,
+						options.Polygon,
+						options.GetOriginalSize(),
+						options.GetNewSize());
+				}
+			}
 		}
 	}
 }
