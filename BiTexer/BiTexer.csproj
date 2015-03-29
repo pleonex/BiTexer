@@ -43,6 +43,7 @@
     <Compile Include="CommandsList.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Commands.cs" />
+    <Compile Include="TextureFixer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
