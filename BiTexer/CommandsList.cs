@@ -72,9 +72,13 @@ namespace BiTexer
 
 		public void SetCommand(Command cmd)
 		{
-			command = cmd;
+			// WARNING: As we are overwriting, we can only write commands with the same
+			// numbers of parameters
+			if (command.Id.ArgumentsSize() != cmd.Id.ArgumentsSize())
+				throw new ArgumentException("Invalid number of arguments");
 
-			// TODO: Write into the stream
+			command = cmd;
+			WriteCommand();
 		}
 
 		private void StartReadNewPack()
@@ -99,6 +103,18 @@ namespace BiTexer
 
 			command = new Command(id, args);
 			entryIndex++;
+		}
+
+		private void WriteCommand()
+		{
+			var writer = new BinaryWriter(BaseStream);
+
+			BaseStream.Position = idPosition - 1;
+			writer.Write((byte)command.Id);
+
+			BaseStream.Position = argumentsPosition - (command.Id.ArgumentsSize() * 4);
+			foreach (uint arg in command.Arguments)
+				writer.Write(arg);
 		}
 	}
 }
