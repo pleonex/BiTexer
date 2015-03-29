@@ -24,29 +24,47 @@ namespace BiTexer
 {
 	public static class NumericExtensions
 	{
-		public static float ToDouble(this uint value, bool signed, int integer, int fractional)
+		public static float ToDouble(this uint value, int integer, int fractional)
 		{
 			int integerMask = 0;
 			float point = 0;
-			if (signed)
-			{
-				if ((value >> (integer + fractional)) == 1)
-				{
-					integerMask = (int)Math.Pow(2, integer + 1) - 1;
-					long intPart = ((value >> fractional) & integerMask);
-					point = intPart - (long)Math.Pow(2, integer + 1);
-				}
-				else
-				{
-					integerMask = (int)Math.Pow(2, integer) - 1;
-					point = ((value >> fractional) & integerMask);
-				}
+
+			if (value >> (integer + fractional) == 1) {
+				integerMask = (int)Math.Pow(2, integer + 1) - 1;
+				long intPart = (value >> fractional) & integerMask;
+				point = intPart - (long)Math.Pow(2, integer + 1);
+			} else {
+				integerMask = (int)Math.Pow(2, integer) - 1;
+				point = ((value >> fractional) & integerMask);
 			}
 
 			// Fractional part
 			int fractionalMask = (int)Math.Pow(2, fractional) - 1;
 			point += (float)(value & fractionalMask) / (fractionalMask + 1);
 			return point;
+		}
+
+		public static uint ToUInt32(this float value, int integer, int fractional)
+		{
+			long point = 0;
+
+			if (value < 0) {
+				point = (int)Math.Floor(value) + (1 << (integer + 1));
+				point <<= fractional;
+
+				point |= 1u << (integer + fractional);
+				value *= -1;
+			} else {
+				point = (int)value << fractional;
+			}
+
+			uint fractionalStep = 1u << fractional;
+			uint fraction = (uint)((value - (uint)value) * fractionalStep);
+			fraction &= (1u << fractional) - 1;
+			point |= fraction;
+
+			uint mask = (1u << (integer + fractional + 1)) - 1;
+			return (uint)(point & mask);
 		}
 	}
 }
