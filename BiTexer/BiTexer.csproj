@@ -45,6 +45,7 @@
     <Compile Include="Commands.cs" />
     <Compile Include="TextureFixer.cs" />
     <Compile Include="Options.cs" />
+    <Compile Include="NumericExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

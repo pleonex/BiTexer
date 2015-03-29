@@ -60,12 +60,37 @@ namespace BiTexer
 
 		private void ChangeTextureCoordinate(ref Command cmd, Size oldSize, Size newSize)
 		{
-			// TODO
+			double x = (cmd.Arguments[0] & 0xFFF).ToDouble(true, 11, 4);
+			double y = (cmd.Arguments[0] >> 16).ToDouble(true, 11, 4);
 		}
 
 		private void ChangeVertex(ref Command cmd, Size oldSize, Size newSize)
 		{
-			// TODO
+			double x, y;
+			switch (cmd.Id) {
+			case Commands.VTX_16:
+				x = (cmd.Arguments[0] & 0xFFFF).ToDouble(true, 3, 12);
+				y = (cmd.Arguments[0] >> 16).ToDouble(true, 3, 12);
+				break;
+
+			case Commands.VTX_10:
+				x = (cmd.Arguments[0] & 0x3FF).ToDouble(true, 3, 6);
+				y = (cmd.Arguments[0] >> 10).ToDouble(true, 3, 6);
+				break;
+
+			case Commands.VTX_XY:
+				x = (cmd.Arguments[0] & 0xFFFF).ToDouble(true, 3, 12);
+				y = (cmd.Arguments[0] >> 16).ToDouble(true, 3, 12);
+				break;
+
+			case Commands.VTX_XZ:
+				x = (cmd.Arguments[0] & 0xFFFF).ToDouble(true, 3, 12);
+				break;
+
+			case Commands.VTX_YZ:
+				y = (cmd.Arguments[0] & 0xFFFF).ToDouble(true, 3, 12);
+				break;
+			}
 		}
 	}
 }
