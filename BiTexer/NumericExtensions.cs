@@ -47,19 +47,19 @@ namespace BiTexer
 		public static uint ToUInt32(this float value, int integer, int fractional)
 		{
 			long point = 0;
+			int intPart = (int)Math.Floor(value);
 
 			if (value < 0) {
-				point = (int)Math.Floor(value) + (1 << (integer + 1));
+				point = intPart + (1 << (integer + 1));
 				point <<= fractional;
 
 				point |= 1u << (integer + fractional);
-				value *= -1;
 			} else {
-				point = (int)value << fractional;
+				point = intPart << fractional;
 			}
 
 			uint fractionalStep = 1u << fractional;
-			uint fraction = (uint)((value - (uint)value) * fractionalStep);
+			uint fraction = (uint)((value - intPart) * fractionalStep);
 			fraction &= (1u << fractional) - 1;
 			point |= fraction;
 
